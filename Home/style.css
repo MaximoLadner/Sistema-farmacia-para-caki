@@ -1,0 +1,255 @@
+:root {
+	--bg: #f8f5ef;
+	--card: #fffcf7;
+	--text: #1d2b2a;
+	--muted: #5f6f6d;
+	--accent: #0f7f5f;
+	--accent-2: #ff9f43;
+	--line: #d9e3dc;
+	--header-bg: #e4f2ec;
+	--shadow: 0 24px 40px rgba(22, 44, 38, 0.12);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	font-family: "Manrope", sans-serif;
+	color: var(--text);
+	background:
+		radial-gradient(circle at 8% 12%, rgba(255, 159, 67, 0.2), transparent 36%),
+		radial-gradient(circle at 90% 88%, rgba(15, 127, 95, 0.18), transparent 32%),
+		linear-gradient(135deg, #f7f2e6 0%, #edf4ee 50%, #f6f4f0 100%);
+	padding: 28px;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	background: var(--card);
+	border: 1px solid #e6eee8;
+	border-radius: 24px;
+	box-shadow: var(--shadow);
+	overflow: hidden;
+	animation: rise 500ms ease-out;
+}
+
+@keyframes rise {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.hero {
+	padding: 30px 28px 22px;
+	background: linear-gradient(120deg, #fffaf0 0%, #eaf4ef 75%);
+	border-bottom: 1px solid #e5ede7;
+}
+
+.hero h1 {
+	margin: 0;
+	font-family: "Space Grotesk", sans-serif;
+	font-size: clamp(1.3rem, 1rem + 2vw, 2rem);
+	line-height: 1.1;
+}
+
+.hero p {
+	margin: 10px 0 0;
+	color: var(--muted);
+	max-width: 900px;
+}
+
+.controls {
+	display: grid;
+	grid-template-columns: 1fr auto auto;
+	gap: 12px;
+	align-items: center;
+	padding: 20px 28px;
+	border-bottom: 1px solid var(--line);
+	background: #fff;
+}
+
+.file-wrap {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	border: 1px dashed #a7beb4;
+	border-radius: 14px;
+	padding: 12px;
+	background: #fbfffc;
+}
+
+.file-wrap label {
+	font-weight: 700;
+	color: #18483b;
+	white-space: nowrap;
+}
+
+input[type="file"] {
+	width: 100%;
+	border: none;
+	background: transparent;
+	color: var(--muted);
+}
+
+.btn {
+	border: none;
+	border-radius: 12px;
+	padding: 12px 16px;
+	font-weight: 700;
+	font-family: "Manrope", sans-serif;
+	cursor: pointer;
+	transition: transform 0.15s ease, filter 0.2s ease;
+}
+
+.btn:disabled {
+	cursor: not-allowed;
+	filter: grayscale(40%);
+	opacity: 0.6;
+}
+
+.btn:hover:not(:disabled) {
+	transform: translateY(-1px);
+	filter: brightness(1.02);
+}
+
+.btn-process {
+	background: linear-gradient(120deg, #0f7f5f, #0b6a4f);
+	color: #fff;
+}
+
+.btn-export {
+	background: linear-gradient(120deg, #ffb05c, #ff9640);
+	color: #2d1a06;
+}
+
+.status {
+	padding: 14px 28px;
+	border-bottom: 1px solid var(--line);
+	font-size: 0.95rem;
+	color: #244f44;
+	background: #f5fbf8;
+}
+
+.search-panel {
+	padding: 14px 28px 16px;
+	border-bottom: 1px solid var(--line);
+	background: linear-gradient(180deg, #ffffff 0%, #fbfefc 100%);
+}
+
+.search-label {
+	display: block;
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #4c655d;
+	margin-bottom: 8px;
+}
+
+.search-box {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 12px;
+	border: 1px solid #c7d8d0;
+	border-radius: 14px;
+	background: #fff;
+	box-shadow: 0 8px 18px rgba(16, 74, 57, 0.08);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-box:focus-within {
+	border-color: #6aab95;
+	box-shadow: 0 0 0 4px rgba(15, 127, 95, 0.14);
+}
+
+.search-icon {
+	font-size: 1.02rem;
+	line-height: 1;
+	opacity: 0.7;
+}
+
+#buscador {
+	width: 100%;
+	border: none;
+	outline: none;
+	background: transparent;
+	font-size: 0.96rem;
+	color: #1d2b2a;
+	font-family: "Manrope", sans-serif;
+}
+
+#buscador::placeholder {
+	color: #7d9088;
+}
+
+.table-wrap {
+	overflow: auto;
+	max-height: 68vh;
+	background: #fff;
+}
+
+table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	min-width: 920px;
+}
+
+th,
+td {
+	padding: 11px 12px;
+	text-align: left;
+	border-bottom: 1px solid #eef2ee;
+	font-size: 0.92rem;
+	white-space: nowrap;
+}
+
+thead th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background: var(--header-bg);
+	color: #20493d;
+	font-weight: 800;
+}
+
+tbody tr:nth-child(even) {
+	background: #fcfefc;
+}
+
+tbody tr:hover {
+	background: #f1f9f4;
+}
+
+.hidden {
+	display: none;
+}
+
+@media (max-width: 920px) {
+	body {
+		padding: 14px;
+	}
+
+	.controls {
+		grid-template-columns: 1fr;
+	}
+
+	.search-panel {
+		padding: 12px 14px 14px;
+	}
+
+	.btn {
+		width: 100%;
+	}
+}
