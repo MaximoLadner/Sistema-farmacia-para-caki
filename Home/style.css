@@ -393,3 +393,9 @@ tbody tr:hover {
 		width: 100%;
 	}
 }
+
+.precio-col {
+    background-color: #ffb05c;
+    
+    font-weight: bold;
+}

@@ -174,31 +174,47 @@ function filterLatestByMaterial(rows, materialColumn, dateColumn) {
 }
 
 function renderTable(rows, columns) {
-	tableHead.innerHTML = "";
-	tableBody.innerHTML = "";
+    tableHead.innerHTML = "";
+    tableBody.innerHTML = "";
 
-	const headerRow = document.createElement("tr");
-	columns.forEach((col) => {
-		const th = document.createElement("th");
-		th.textContent = col;
-		headerRow.appendChild(th);
-	});
-	tableHead.appendChild(headerRow);
+    const headerRow = document.createElement("tr");
 
-	const fragment = document.createDocumentFragment();
-	rows.forEach((row) => {
-		const tr = document.createElement("tr");
-		columns.forEach((col) => {
-			const td = document.createElement("td");
-			const value = row[col];
-			td.textContent = formatValueForCell(value, col);
-			tr.appendChild(td);
-		});
-		fragment.appendChild(tr);
-	});
+    columns.forEach((col, i) => {
+        const th = document.createElement("th");
+        th.textContent = col;
 
-	tableBody.appendChild(fragment);
-	dataTable.classList.remove("hidden");
+       
+        if (normalizeText(col).includes("precio")) {
+            th.classList.add("precio-col");
+        }
+
+        headerRow.appendChild(th);
+    });
+
+    tableHead.appendChild(headerRow);
+
+    const fragment = document.createDocumentFragment();
+
+    rows.forEach((row) => {
+        const tr = document.createElement("tr");
+
+        columns.forEach((col) => {
+            const td = document.createElement("td");
+            td.textContent = formatValueForCell(row[col], col);
+
+            
+            if (normalizeText(col).includes("precio")) {
+                td.classList.add("precio-col");
+            }
+
+            tr.appendChild(td);
+        });
+
+        fragment.appendChild(tr);
+    });
+
+    tableBody.appendChild(fragment);
+    dataTable.classList.remove("hidden");
 }
 
 function updateStatus(message, isError = false) {
@@ -318,7 +334,17 @@ processBtn.addEventListener("click", async () => {
 		}
 
 		filteredRows = filterLatestByMaterial(rows, materialColumn, dateColumn);
-		currentColumns = columns;
+		const precioColumn = findColumn(columns, ["precio kg", "precio"]);
+
+		if (!precioColumn) {
+			updateStatus("No se encontró la columna Precio KG.", true);
+			return;
+		}
+
+		const index = columns.indexOf(precioColumn);
+
+	
+		currentColumns = columns.slice(0, index + 1);
 
 		renderTable(filteredRows, currentColumns);
 		setResultsVisibility(filteredRows.length > 0);
