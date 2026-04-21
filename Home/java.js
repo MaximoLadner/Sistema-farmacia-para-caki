@@ -5,6 +5,12 @@ const statusBox = document.getElementById("status");
 const dataTable = document.getElementById("dataTable");
 const searchPanel = document.getElementById("searchPanel");
 const buscador = document.getElementById("buscador");
+const openModalBtn = document.getElementById("openModalBtn");
+const closeModalBtn = document.getElementById("closeModalBtn");
+const cancelModalBtn = document.getElementById("cancelModalBtn");
+const modalOverlay = document.getElementById("modalOverlay");
+const modalFields = document.getElementById("modalFields");
+const addRowForm = document.getElementById("addRowForm");
 const tableHead = document.getElementById("tableHead");
 const tableBody = document.getElementById("tableBody");
 
@@ -205,6 +211,7 @@ function setResultsVisibility(hasData) {
 	if (hasData) {
 		searchPanel.classList.remove("hidden");
 		dataTable.classList.remove("hidden");
+		openModalBtn.disabled = false;
 		return;
 	}
 
@@ -213,6 +220,47 @@ function setResultsVisibility(hasData) {
 	tableHead.innerHTML = "";
 	tableBody.innerHTML = "";
 	buscador.value = "";
+	openModalBtn.disabled = true;
+}
+
+function buildModalFields(columns) {
+	modalFields.innerHTML = "";
+
+	columns.forEach((column) => {
+		const fieldWrap = document.createElement("div");
+		fieldWrap.className = "field-wrap";
+
+		const label = document.createElement("label");
+		const safeId = `field-${normalizeText(column).replace(/\s+/g, "-")}`;
+		label.setAttribute("for", safeId);
+		label.textContent = column;
+
+		const input = document.createElement("input");
+		input.id = safeId;
+		input.name = column;
+		input.type = isDateColumn(column) ? "datetime-local" : "text";
+
+		fieldWrap.appendChild(label);
+		fieldWrap.appendChild(input);
+		modalFields.appendChild(fieldWrap);
+	});
+}
+
+function openModal() {
+	if (!currentColumns.length) {
+		updateStatus("Primero carga una planilla para habilitar Agregar producto.", true);
+		return;
+	}
+
+	buildModalFields(currentColumns);
+	modalOverlay.classList.remove("hidden");
+	const firstInput = modalFields.querySelector("input");
+	if (firstInput) firstInput.focus();
+}
+
+function closeModal() {
+	modalOverlay.classList.add("hidden");
+	addRowForm.reset();
 }
 
 function filtrar() {
@@ -298,3 +346,44 @@ exportBtn.addEventListener("click", () => {
 	XLSX.writeFile(exportBook, "Materia_Prima_Ultimos_Ingresos.xlsx");
 	updateStatus("Archivo exportado: Materia_Prima_Ultimos_Ingresos.xlsx");
 });
+
+openModalBtn.addEventListener("click", openModal);
+closeModalBtn.addEventListener("click", closeModal);
+cancelModalBtn.addEventListener("click", closeModal);
+
+modalOverlay.addEventListener("click", (event) => {
+	if (event.target === modalOverlay) {
+		closeModal();
+	}
+});
+
+document.addEventListener("keydown", (event) => {
+	if (event.key === "Escape" && !modalOverlay.classList.contains("hidden")) {
+		closeModal();
+	}
+});
+
+addRowForm.addEventListener("submit", (event) => {
+	event.preventDefault();
+
+	if (!currentColumns.length) {
+		updateStatus("No hay columnas disponibles para agregar producto.", true);
+		closeModal();
+		return;
+	}
+
+	const newRow = {};
+	currentColumns.forEach((column) => {
+		const field = addRowForm.elements.namedItem(column);
+		newRow[column] = field ? field.value.trim() : "";
+	});
+
+	filteredRows.unshift(newRow);
+	renderTable(filteredRows, currentColumns);
+	filtrar();
+	closeModal();
+
+	updateStatus("Producto agregado correctamente en la tabla.");
+});
+
+setResultsVisibility(false);
