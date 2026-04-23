@@ -36,6 +36,13 @@ const dateCandidates = [
 	"fecharev"
 ];
 
+const folioCandidates = [
+    "folio cert a",
+    "folio",
+    "cert a",
+    "folio cert"
+];
+
 const argentinaDateTimeFormatter = new Intl.DateTimeFormat("es-AR", {
 	timeZone: "America/Argentina/Buenos_Aires",
 	year: "numeric",
@@ -279,20 +286,41 @@ function closeModal() {
 	addRowForm.reset();
 }
 
-function filtrar() {
-    
+function filtrar() 
+{
     const query = document.getElementById("buscador").value.toLowerCase();
     const rows = dataTable.getElementsByTagName("tr");
 
-    for (let i = 1; i < rows.length; i++) {
-        const cells = rows[i].getElementsByTagName("td");
-        let rowText = "";
-        for (let j = 0; j < cells.length; j++) {
-            rowText += cells[j].textContent.toLowerCase() + " ";
+    // Buscar índice de la columna "Folio Cert.A"
+    let folioIndex = -1;
+    const headers = tableHead.getElementsByTagName("th");
+
+    for (let i = 0; i < headers.length; i++) 
+    {
+        if (normalizeText(headers[i].textContent).includes("folio")) 
+        {
+            folioIndex = i;
+            break;
         }
-        rows[i].style.display = rowText.includes(query) ? "" : "none";
     }
-    
+
+    if (folioIndex === -1) 
+    {
+        console.warn("No se encontró la columna Folio Cert.A");
+        return;
+    }
+
+    // Filtrar filas
+    for (let i = 1; i < rows.length; i++) 
+    {
+        const cells = rows[i].getElementsByTagName("td");
+
+        if (!cells[folioIndex]) continue;
+
+        const cellText = cells[folioIndex].textContent.toLowerCase();
+
+        rows[i].style.display = cellText === query ? "" : "none";
+    }
 }
 
 processBtn.addEventListener("click", async () => {
@@ -342,9 +370,14 @@ processBtn.addEventListener("click", async () => {
 		}
 
 		const index = columns.indexOf(precioColumn);
+		const folioColumn = findColumn(columns, ["folio"]);
 
-	
 		currentColumns = columns.slice(0, index + 1);
+
+		if (folioColumn && !currentColumns.includes(folioColumn)) 
+		{
+			currentColumns.push(folioColumn);
+		}
 
 		renderTable(filteredRows, currentColumns);
 		setResultsVisibility(filteredRows.length > 0);
